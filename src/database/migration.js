@@ -38,6 +38,7 @@ async function runMigration() {
     try {
         console.log("Migrating database " + file.split("/")[file.split("/").length - 1]);
         await init.query("CREATE DATABASE IF NOT EXISTS `db_seton`");
+        await sequelize.query("SET FOREIGN_KEY_CHECKS = 0");
         
         console.log("Executing query: DROP DATABASE IF EXISTS `db_seton`");
         await sequelize.query("DROP DATABASE IF EXISTS `db_seton`");
