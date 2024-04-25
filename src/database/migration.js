@@ -34,23 +34,24 @@ const sqlString = fs.readFileSync(file, "utf8")
     .replace(/\/\*[\s\S]*?\*\//g, "");
 const queries = sqlString.split(";").filter((q) => q != "");
 
-console.log("Migrating database " + file.split("/")[file.split("/").length - 1]);
-init.query("CREATE DATABASE IF NOT EXISTS `db_seton`")
-    .then(() => {
+async function runMigration() {
+    try {
+        console.log("Migrating database " + file.split("/")[file.split("/").length - 1]);
+        await init.query("CREATE DATABASE IF NOT EXISTS `db_seton`");
+        
         console.log("Executing query: DROP DATABASE IF EXISTS `db_seton`");
-        sequelize.query("DROP DATABASE IF EXISTS `db_seton`")
-            .then(() => {
-                return Promise.all(queries.map(query => {
-                    const message = query.substring(0, 80) + (query.length > 80 ? " ..." : "");
-                    console.log("Executing query:", message);
-                    return sequelize.query(query);
-                }));
-            })
-            .then(() => {
-                console.log("Database successfully migrated");
-            })
-            .catch(err => {
-                console.error("Error executing SQL file:\n", err);
-            });
-    });
+        await sequelize.query("DROP DATABASE IF EXISTS `db_seton`");
 
+        for (let i = 0; i < queries.length; i++) {
+            const query = queries[i];
+            console.log("Executing query:", query.substring(0, 80) + (query.length > 80 ? " ..." : ""));
+            await sequelize.query(query);
+        }
+        console.log("Database successfully migrated");
+    } catch (err) {
+        console.error("Error executing SQL file:\n", err);
+    }
+    
+}
+
+runMigration();
