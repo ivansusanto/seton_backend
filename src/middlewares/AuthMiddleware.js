@@ -11,15 +11,15 @@ async function AuthMiddleware (req, res, next) {
 
     try {
         const decodedToken = jwt.verify(token, env("SECRET_KEY"));
-        const email = decodedToken.email;
+        const { email, auth_token } = decodedToken;
         
-        const user = await User.findOne({ email: email });
+        const user = await User.findOne({ email: email, auth_token: auth_token });
         
         if (user) {
             req.user = user;
             next();
         } else {
-            return res.status(404).json({ message: "Username Not Found" });
+            return res.status(404).json({ message: "User Not Found" });
         }
     } catch (err) {
         return res.status(401).json({ message: "Invalid Token" });

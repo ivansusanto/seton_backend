@@ -1,18 +1,17 @@
-const mongoose = require('mongoose');
+const Sequelize = require('sequelize');
 const env = require("../config/env.config");
-let connection = null;
 
-async function connect(){
-    try {
-        connection = await mongoose.connect(env('DB_STRING'))
-        console.log("Connection successful!");
-    } catch (error) {
-        console.error("Connection failed\n", error);
+const sequelize = new Sequelize(
+    env("DB_NAME"),
+    env("DB_USER"),
+    env("DB_PASSWORD"),
+    {
+        host: env("DB_HOST"),
+        port: env("DB_PORT"),
+        dialect: "mysql",
+        timezone: "+07:00",
+        logging: false
     }
-}
+);
 
-function getConn(){
-    return connection;
-}
-
-module.exports = { connect, getConn }
+module.exports = sequelize;
