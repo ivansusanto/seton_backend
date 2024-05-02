@@ -9,15 +9,19 @@ const registerUser = async (req, res) => {
     const { email, name, password } = req.body;
 
     if (!email || !name || !password) {
-        return res.status(400).json({
-            message: `Input must not be empty!`
+        return res.status(200).json({
+            status : "400",
+            message: `Input must not be empty!`,
+            data: ""
         });
     }
 
     const user = await User.findByPk(email);
     if (user) {
-        return res.status(400).json({
-            message: `Email is already used!`
+        return res.status(200).json({
+            status : "400",
+            message: `Email is already used!`,
+            data: ""
         });
     }
 
@@ -31,20 +35,20 @@ const registerUser = async (req, res) => {
             }
         });
         
-        const mailOptions = {
-            from: env("EMAIL_ADDRESS"),
-            to: email,
-            subject: 'Verify your Seton registration account',
-            text: `Click link below to verify your account ${ env("HOST") }/api/users/verify?token=${ token }`
-        };
+        // const mailOptions = {
+        //     from: env("EMAIL_ADDRESS"),
+        //     to: email,
+        //     subject: 'Verify your Seton registration account',
+        //     text: `Click link below to verify your account ${ env("HOST") }/api/users/verify?token=${ token }`
+        // };
         
-        transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-                console.error('Error sending email:', error);
-            } else {
-                console.log('Email sent:', info.response);
-            }
-        });
+        // transporter.sendMail(mailOptions, (error, info) => {
+        //     if (error) {
+        //         console.error('Error sending email:', error);
+        //     } else {
+        //         console.log('Email sent:', info.response);
+        //     }
+        // });
 
         const bcryptedPassword = await bcrypt.hash(password, parseInt(env("BCRYPT_SALT")));
         await User.create({
@@ -54,7 +58,9 @@ const registerUser = async (req, res) => {
         });
 
         return res.status(201).json({
-            message: `User successfully registered!`
+            status : "201",
+            message: `User successfully registered!`,
+            data: ""
         });
     } catch (err) {
         return res.status(500).json({
@@ -74,12 +80,16 @@ const verifyUser = async (req, res) => {
         if (user) {
             if (user.status == 1) {
                 return res.status(200).json({
-                    message: `User is already verified!`
+                    status : "200",
+                    message: `User is already verified!`,
+                    data: ""
                 });
             }
         } else {
-            return res.status(404).json({
-                message: `Token has been changed by user, email not found!`
+            return res.status(200).json({
+                status : "404",
+                message: `Token has been changed by user, email not found!`,
+                data: ""
             });
         }
 
@@ -93,7 +103,9 @@ const verifyUser = async (req, res) => {
         });
 
         return res.status(201).json({
-            message: `User successfully verfied!`
+            status : "201",
+            message: `User successfully verfied!`,
+            data: ""
         });
     } catch (err) {
         return res.status(500).json({
@@ -106,8 +118,10 @@ const loginUser = async (req, res) => {
     const { email, password, auth_token } = req.body;
 
     if (!email || !password) {
-        return res.status(400).json({
-            message: `Input must not be empty!`
+        return res.status(200).json({
+            status : "400",
+            message: `Input must not be empty!`,
+            data: ""
         });
     }
 
@@ -118,28 +132,36 @@ const loginUser = async (req, res) => {
                 auth_token: auth_token
             });
         } else {
-            return res.status(401).json({
-                message: `User unauthorized!`
+            return res.status(200).json({
+                status : "401",
+                message: `User unauthorized!`,
+                data: ""
             });
         }
     }
 
     const user = await User.findByPk(email);
     if (!user) {
-        return res.status(404).json({
-            message: `Email have not been registered!`
+        return res.status(200).json({
+            status : "404",
+            message: `Email have not been registered!`,
+            data: ""
         });
     }
 
     try {
         const resultPassword = bcrypt.compareSync(password, user.password);
         if (!resultPassword) {
-            return res.status(400).json({
-                message: `Incorrect password!`
+            return res.status(200).json({
+                status : "400",
+                message: `Incorrect password!`,
+                data: ""
             });
         } else if (user.status == 0) {
-            return res.status(400).json({
-                message: `User has not verified their email!`
+            return res.status(200).json({
+                status : "400",
+                message: `User has not verified their email!`,
+                data: ""
             });
         }
         const token = jwt.sign({
