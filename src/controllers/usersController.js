@@ -167,8 +167,14 @@ const loginUser = async (req, res) => {
     }
 }
 
+const fetchAllUser = async (req, res) => {
+    var user = await User.findAll();
+    return res.status(200).json(user);
+}
+
 module.exports = {
     registerUser,
     verifyUser,
-    loginUser
+    loginUser,
+    fetchAllUser
 }

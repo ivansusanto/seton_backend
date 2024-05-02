@@ -11,6 +11,12 @@ app.use(cors());
 const indexRouter = require("./routes/index.routes");
 
 app.use("/api", indexRouter);
+app.get("/api/test", (req, res) => {
+    return res.status(200).json({
+        message: `Welcome to the API!`
+    });
+})
+
 app.all("*", async (req, res) => {
     return res.status(404).json({
         message: `Endpoint not found!`
