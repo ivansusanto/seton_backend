@@ -180,7 +180,9 @@ const loginUser = async (req, res) => {
         });
 
         return res.status(200).json({
-            auth_token: token
+            status : "200",
+            message: `User successfully logged in!`,
+            data: token
         });
     } catch (err) {
         return res.status(500).json({
