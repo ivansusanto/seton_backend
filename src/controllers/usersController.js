@@ -35,20 +35,20 @@ const registerUser = async (req, res) => {
             }
         });
         
-        // const mailOptions = {
-        //     from: env("EMAIL_ADDRESS"),
-        //     to: email,
-        //     subject: 'Verify your Seton registration account',
-        //     text: `Click link below to verify your account ${ env("HOST") }/api/users/verify?token=${ token }`
-        // };
+        const mailOptions = {
+            from: env("EMAIL_ADDRESS"),
+            to: email,
+            subject: 'Verify your Seton registration account',
+            text: `Click link below to verify your account ${ env("HOST") }/api/users/verify?token=${ token }`
+        };
         
-        // transporter.sendMail(mailOptions, (error, info) => {
-        //     if (error) {
-        //         console.error('Error sending email:', error);
-        //     } else {
-        //         console.log('Email sent:', info.response);
-        //     }
-        // });
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.error('Error sending email:', error);
+            } else {
+                console.log('Email sent:', info.response);
+            }
+        });
 
         const bcryptedPassword = await bcrypt.hash(password, parseInt(env("BCRYPT_SALT")));
         await User.create({
