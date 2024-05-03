@@ -42,3 +42,5 @@ Project.init({
     timestamps: false,
     underscored: true
 })
+
+module.exports = Project;

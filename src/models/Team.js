@@ -25,3 +25,5 @@ Team.init({
     timestamps: false,
     underscored: true
 })
+
+module.exports = Team;

@@ -42,3 +42,5 @@ Task.init({
     timestamps: false,
     underscored: true
 })
+
+module.exports = Task;

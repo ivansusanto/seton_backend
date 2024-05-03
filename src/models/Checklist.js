@@ -30,3 +30,5 @@ Checklist.init({
     timestamps: false,
     underscored: true
 })
+
+module.exports = Checklist;
