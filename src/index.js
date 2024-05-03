@@ -11,9 +11,11 @@ app.use(cors());
 const indexRouter = require("./routes/index.routes");
 
 app.use("/api", indexRouter);
-app.get("/api/test", (req, res) => {
+app.get("/api/checkConnection", (req, res) => {
     return res.status(200).json({
-        message: `Welcome to the API!`
+        status : "200",
+        message: `Welcome to the API!`,
+        data : ""
     });
 })
 
