@@ -5,10 +5,12 @@ const MulterUpload = require("../validations/Multer");
 
 const {
     fetchAllProjects,
+    getUserProjects,
     createProject,
 } = require("../controllers/projectsController");
 
-router.get("", fetchAllProjects)
-router.post("/create", createProject)
+router.get("/", fetchAllProjects)
+router.get("/:email", getUserProjects)
+router.post("/", createProject)
 
 module.exports = router;

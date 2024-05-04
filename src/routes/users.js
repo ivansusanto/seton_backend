@@ -13,6 +13,6 @@ const MulterUpload = require("../validations/Multer");
 router.post("/register", registerUser);
 router.get("/verify", verifyUser);
 router.post("/login", loginUser);
-router.get("", fetchAllUser);
+router.get("/", fetchAllUser);
 
 module.exports = router;

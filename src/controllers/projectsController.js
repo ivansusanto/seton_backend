@@ -1,7 +1,9 @@
 const env = require("../config/env.config");
 
 const Project = require("../models/Project");
+const ProjectMember = require("../models/ProjectMember");
 const User = require("../models/User");
+const Task = require("../models/Task");
 
 const createProject = async (req, res) => {
     const { name, description, start, deadline, pm_email, } = req.body;
@@ -71,12 +73,53 @@ const createProject = async (req, res) => {
     }
 }
 
+const getUserProjects = async (req, res) => {
+    const result = [];
+    var projects = await Project.findAll({
+        where: {
+            pm_email: req.params.email
+        }
+    });
+    for (p of projects) result.push(p.dataValues);
+
+    var _projects = await ProjectMember.findAll({
+        where: {
+            member_email: req.params.email
+        }
+    });
+    for (p of _projects) {
+        const _p = await Project.findByPk(p.project_id);
+        result.push(_p.dataValues);
+    }
+    for (p of result) {
+        p.owner = await User.findByPk(p.pm_email);
+        p.pm_email = undefined;
+        const members = [];
+        const _members = await ProjectMember.findAll({
+            where: {
+                project_id: p.id
+            }
+        });
+        for (m of _members) {
+            members.push(await User.findByPk(m.member_email));
+        }
+        p.members = members;
+        p.tasks = await Task.findAll({
+            where: {
+                project_id: p.id
+            }
+        });
+    }
+    return res.status(200).json(result);
+}
+
 const fetchAllProjects = async (req, res) => {
-    var project = await Project.findAll();
-    return res.status(200).json(project);
+    var projects = await Project.findAll();
+    return res.status(200).json(projects);
 }
 
 module.exports = {
     fetchAllProjects,
+    getUserProjects,
     createProject,
 }

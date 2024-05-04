@@ -35,6 +35,10 @@ Task.init({
         type: DataTypes.STRING(255),
         allowNull: false
     },
+    project_id : {
+        type: DataTypes.INTEGER(11),
+        allowNull: false
+    }
 }, {
     sequelize,
     modelName: "Task",

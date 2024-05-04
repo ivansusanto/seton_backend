@@ -1,29 +1,29 @@
 const sequelize = require('../database/connection.js');
 const { Model, DataTypes } = require('sequelize');
 
-class Team extends Model {}
+class ProjectMember extends Model {}
 
-Team.init({
+ProjectMember.init({
     id : {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
         allowNull: false
     },
-    task_id : {
+    project_id : {
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    team_email : {
+    member_email: {
         type: DataTypes.STRING(255),
         allowNull: false
     },
 }, {
     sequelize,
-    modelName: "Team",
-    tableName: "teams",
+    modelName: "ProjectMember",
+    tableName: "project_members",
     timestamps: false,
     underscored: true
 })
 
-module.exports = Team;
+module.exports = ProjectMember;
