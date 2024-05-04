@@ -110,7 +110,11 @@ const getUserProjects = async (req, res) => {
             }
         });
     }
-    return res.status(200).json(result);
+    return res.status(200).json({
+        status : "200",
+        message: `Success get user projects!`,
+        data: result
+    });
 }
 
 const fetchAllProjects = async (req, res) => {
