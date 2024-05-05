@@ -74,17 +74,18 @@ const createProject = async (req, res) => {
 }
 
 const getUserProjects = async (req, res) => {
+    const { email } = req.params;
     const result = [];
     var projects = await Project.findAll({
         where: {
-            pm_email: req.params.email
+            pm_email: email
         }
     });
     for (p of projects) result.push(p.dataValues);
 
     var _projects = await ProjectMember.findAll({
         where: {
-            member_email: req.params.email
+            member_email: email
         }
     });
     for (p of _projects) {

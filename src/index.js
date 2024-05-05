@@ -9,8 +9,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 const indexRouter = require("./routes/index.routes");
+const { AuditLog } = require("../src/middlewares/AuditLog");
 
-app.use("/api", indexRouter);
+app.use("/api", AuditLog, indexRouter);
 app.get("/api/checkConnection", (req, res) => {
     return res.status(200).json({
         status : "200",
