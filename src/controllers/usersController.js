@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const env = require("../config/env.config");
 const nodemailer = require('nodemailer');
+const { Op } = require("sequelize");
 
 const User = require("../models/User");
 
@@ -196,9 +197,56 @@ const fetchAllUser = async (req, res) => {
     return res.status(200).json(user);
 }
 
+const fetchAllUserExceptUserLogin = async (req, res) => {
+    const { email } = req.params;
+    const result = [];
+
+    //ambil semua user kecuali yg email
+    const users = await User.findAll({
+        where: {
+            email: {
+                [Op.ne]: email
+            }
+        }
+    });
+    for (u of users) result.push(u.dataValues);
+
+    return res.status(200).json({
+        status : "200",
+        message: `Success get all user except user login!`,
+        data: result
+    });
+}
+
+const emailValidate = async (req, res) => {
+    const { email } = req.params;
+
+    var user = await User.findOne({
+        where: {
+            email: email
+        }
+    });
+
+    if (user) {
+        return res.status(200).json({
+            status : "200",
+            message: `Email Valid`,
+            data: ""
+        });
+    } else {
+        return res.status(200).json({
+            status : "404",
+            message: `Email not found!`,
+            data: ""
+        });
+    }
+}
+
 module.exports = {
     registerUser,
     verifyUser,
     loginUser,
-    fetchAllUser
+    fetchAllUser,
+    fetchAllUserExceptUserLogin,
+    emailValidate,
 }
