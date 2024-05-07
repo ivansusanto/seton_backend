@@ -231,7 +231,7 @@ const emailValidate = async (req, res) => {
         return res.status(200).json({
             status : "200",
             message: `Email Valid`,
-            data: ""
+            data: user
         });
     } else {
         return res.status(200).json({
