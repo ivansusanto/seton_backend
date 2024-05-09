@@ -16,7 +16,7 @@ router.post("/register", registerUser);
 router.get("/verify", verifyUser);
 router.post("/login", loginUser);
 router.get("/", fetchAllUser);
-router.get("/except/:email", fetchAllUserExceptUserLogin)
-router.get("/:email", emailValidate)
+router.get("/except/:email", fetchAllUserExceptUserLogin);
+router.get("/:email", emailValidate);
 
 module.exports = router;

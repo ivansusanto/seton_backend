@@ -9,8 +9,8 @@ const {
     createProject,
 } = require("../controllers/projectsController");
 
-router.get("/", fetchAllProjects)
-router.get("/:email", getUserProjects)
-router.post("/", createProject)
+router.get("/", fetchAllProjects);
+router.get("/:email", getUserProjects);
+router.post("/", createProject);
 
 module.exports = router;
