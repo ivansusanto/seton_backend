@@ -44,9 +44,15 @@ CREATE TABLE `checklists` (
   PRIMARY KEY (`id`),
   KEY `task_id` (`task_id`),
   CONSTRAINT `checklists_ibfk_1` FOREIGN KEY (`task_id`) REFERENCES `tasks` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
 /*Data for the table `checklists` */
+
+insert  into `checklists`(`id`,`title`,`is_checked`,`task_id`) values 
+(1,'User Model',1,1),
+(2,'Project Model',1,1),
+(3,'Task Model',1,1),
+(4,'Subtask Model',0,1);
 
 /*Table structure for table `comments` */
 
@@ -79,9 +85,14 @@ CREATE TABLE `labels` (
   PRIMARY KEY (`id`),
   KEY `task_id` (`task_id`),
   CONSTRAINT `labels_ibfk_1` FOREIGN KEY (`task_id`) REFERENCES `tasks` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 
 /*Data for the table `labels` */
+
+insert  into `labels`(`id`,`title`,`color`,`task_id`) values 
+(1,'Database','0E9794',1),
+(2,'Coding','008FAE',1),
+(3,'Models','0C81BD',2);
 
 /*Table structure for table `project_members` */
 
