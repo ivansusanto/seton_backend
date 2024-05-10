@@ -234,10 +234,18 @@ const emailValidate = async (req, res) => {
             data: user
         });
     } else {
+        var userKosong = {
+            email: "",
+            name: "",
+            profile_picture: null,
+            password: "",
+            auth_token:"",
+            status: 0
+        }
         return res.status(200).json({
             status : "404",
             message: `Email not found!`,
-            data: ""
+            data: userKosong
         });
     }
 }
