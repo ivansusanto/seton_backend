@@ -127,8 +127,35 @@ const fetchAllProjects = async (req, res) => {
     return res.status(200).json(projects);
 }
 
+const fetchProjectById = async (req, res) => {
+    const { id } = req.params;
+    var project = await Project.findByPk(id);
+    if(project == null) {
+        let projectKosong = {
+            name: "",
+            description: "",
+            start: "",
+            deadline: "",
+            pm_email: "",
+            status : -1
+        }
+        return res.status(200).json({
+            status : "404",
+            message: `Project not found!`,
+            data: projectKosong
+        });
+    } else {
+        return res.status(200).json({
+            status : "200",
+            message: `Success get project by id!`,
+            data: project
+        });
+    }
+}
+
 module.exports = {
     fetchAllProjects,
     getUserProjects,
     createProject,
+    fetchProjectById,
 }

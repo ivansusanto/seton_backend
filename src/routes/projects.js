@@ -7,10 +7,12 @@ const {
     fetchAllProjects,
     getUserProjects,
     createProject,
+    fetchProjectById,
 } = require("../controllers/projectsController");
 
 router.get("/", fetchAllProjects);
 router.get("/:email", getUserProjects);
 router.post("/", createProject);
+router.get("/getById/:id", fetchProjectById);
 
 module.exports = router;
