@@ -6,15 +6,16 @@ const User = require("../models/User");
 const Task = require("../models/Task");
 
 const createProject = async (req, res) => {
-    const { name, description, start, deadline, pm_email, } = req.body;
+    const { name, description, startTime, deadline, pm_email, members_email} = req.body;
+    console.log(req.body);
 
-    if (!name || !description || !start || !deadline || !pm_email) {
+    if (!name || !description || !startTime || !deadline || !pm_email) {
         return res.status(200).json({
             status : "400",
             message: `Input must not be empty!`,
             data: ""
         });
-    }
+    } 
 
     const user = await User.findByPk(pm_email);
     if (!user) {
@@ -25,17 +26,7 @@ const createProject = async (req, res) => {
         });
     }
 
-    //regex for start and deadline (yyyy-MM-dd HH:mm)
-    const date_regex = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/;
-    if (!date_regex.test(start) || !date_regex.test(deadline)) {
-        return res.status(200).json({
-            status : "400",
-            message: `Invalid date format!`,
-            data: ""
-        });
-    }
-
-    if (new Date(start) > new Date(deadline)) {
+    if (new Date(startTime) > new Date(deadline)) {
         return res.status(200).json({
             status : "400",
             message: `Start date must be before deadline!`,
@@ -43,7 +34,7 @@ const createProject = async (req, res) => {
         });
     }
 
-    if(new Date(start) < new Date()) {
+    if(new Date(startTime) < new Date()) {
         return res.status(200).json({
             status : "400",
             message: `Start date must be after today!`,
@@ -55,10 +46,22 @@ const createProject = async (req, res) => {
         await Project.create({
             name: name,
             description: description,
-            start: start,
+            start: startTime,
             deadline: deadline,
             pm_email: pm_email,
         });
+
+        const project = await Project.findOne({
+            order: [ [ 'id', 'DESC' ]],
+        });
+        for (let i = 0; i < members_email.length; i++){
+            let project_member = new ProjectMember({
+                project_id: project.id,
+                member_email: members_email[i],
+            })
+
+            await project_member.save();
+        }
 
         return res.status(201).json({
             status : "201",
@@ -66,6 +69,7 @@ const createProject = async (req, res) => {
             data: ""
         });
     } catch (err) {
+        console.log(err);
         return res.status(500).json({
             message: err.message
         });
