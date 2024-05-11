@@ -1,9 +1,11 @@
 const env = require("../config/env.config");
+const moment = require('moment');
 
 const Project = require("../models/Project");
 const ProjectMember = require("../models/ProjectMember");
 const User = require("../models/User");
 const Task = require("../models/Task");
+const TaskTeam = require("../models/TaskTeam");
 
 const createProject = async (req, res) => {
     const { name, description, startTime, deadline, pm_email, members_email} = req.body;
@@ -153,9 +155,100 @@ const fetchProjectById = async (req, res) => {
     }
 }
 
+const fetchDetailProjects = async (req, res) => {
+    const { id } = req.params;
+    console.log(id);
+
+    // details project
+    var project = await Project.findByPk(id);
+    console.log(project);
+
+    if(project == null) {
+        let projectKosong = {
+            name: "",
+            description: "",
+            start: "",
+            deadline: "",
+            pm_email: "",
+            status : -1
+        }
+        return res.status(200).json({
+            status : "404",
+            message: `Project not found!`,
+            data: projectKosong
+        });
+    } else {   
+        //details pm
+        var pm = await User.findByPk(project.pm_email);
+
+        //details member project
+        var member = [];
+        var members = await ProjectMember.findAll({
+            where: {
+                project_id: id
+            }
+        });
+        for (m of members) {
+            member.push(await User.findByPk(m.member_email));
+        }
+
+        var tasks = await Task.findAll({
+            where: {
+                project_id: id
+            }
+        });
+
+        for (t in tasks) {
+            tasks[t].pic_email = await User.findByPk(tasks[t].pic_email);
+        }
+
+        //count task that status is 0
+        var upcomingTask = 0;
+        var ongoingTask = 0;
+        var submittedTask = 0;
+        var revisionTask = 0;
+        var completedTask = 0;
+
+        for (t of tasks) {
+            if (t.status == 0) {
+                upcomingTask++;
+            } else if (t.status == 1) {
+                ongoingTask++;
+            } else if (t.status == 2) {
+                submittedTask++;
+            } else if (t.status == 3) {
+                revisionTask++;
+            } else if (t.status == 4) {
+                completedTask++;
+            }
+        }
+
+        return res.status(200).json({
+            status : "200",
+            message: `Success get project by id!`,
+            data : {
+                projectName : project.name,
+                projectDescription : project.description,
+                projectStart : moment(project.start).format('DD-MM-YYYY HH:mm'),
+                projectDeadline : moment(project.deadline).format('DD-MM-YYYY HH:mm'),
+                projectManager : pm,
+                projectMembers : member,
+                upcomingTask : upcomingTask,
+                ongoingTask : ongoingTask,
+                submittedTask : submittedTask,
+                revisionTask : revisionTask,
+                completedTask : completedTask,
+                projectStatus : project.status == "0"? "Ongoing" : "Completed",
+            }
+
+        });
+    }
+}
+
 module.exports = {
     fetchAllProjects,
     getUserProjects,
     createProject,
     fetchProjectById,
+    fetchDetailProjects,
 }
