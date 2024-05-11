@@ -9,7 +9,6 @@ const TaskTeam = require("../models/TaskTeam");
 
 const createProject = async (req, res) => {
     const { name, description, startTime, deadline, pm_email, members_email} = req.body;
-    console.log(req.body);
 
     if (!name || !description || !startTime || !deadline || !pm_email) {
         return res.status(200).json({
@@ -71,7 +70,6 @@ const createProject = async (req, res) => {
             data: ""
         });
     } catch (err) {
-        console.log(err);
         return res.status(500).json({
             message: err.message
         });
@@ -157,11 +155,8 @@ const fetchProjectById = async (req, res) => {
 
 const fetchDetailProjects = async (req, res) => {
     const { id } = req.params;
-    console.log(id);
 
-    // details project
     var project = await Project.findByPk(id);
-    console.log(project);
 
     if(project == null) {
         let projectKosong = {
@@ -178,10 +173,8 @@ const fetchDetailProjects = async (req, res) => {
             data: projectKosong
         });
     } else {   
-        //details pm
         var pm = await User.findByPk(project.pm_email);
 
-        //details member project
         var member = [];
         var members = await ProjectMember.findAll({
             where: {
@@ -202,7 +195,6 @@ const fetchDetailProjects = async (req, res) => {
             tasks[t].pic_email = await User.findByPk(tasks[t].pic_email);
         }
 
-        //count task that status is 0
         var upcomingTask = 0;
         var ongoingTask = 0;
         var submittedTask = 0;
