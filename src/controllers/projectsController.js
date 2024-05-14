@@ -67,7 +67,7 @@ const createProject = async (req, res) => {
         return res.status(201).json({
             status : "201",
             message: `Project successfully created!`,
-            data: ""
+            data: project.id
         });
     } catch (err) {
         return res.status(500).json({
@@ -132,6 +132,7 @@ const fetchProjectById = async (req, res) => {
     var project = await Project.findByPk(id);
     if(project == null) {
         let projectKosong = {
+            id: -1,
             name: "",
             description: "",
             start: "",
