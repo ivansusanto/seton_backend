@@ -1,5 +1,4 @@
 const env = require("../config/env.config");
-const moment = require('moment');
 
 const Project = require("../models/Project");
 const ProjectMember = require("../models/ProjectMember");
@@ -222,8 +221,8 @@ const fetchDetailProjects = async (req, res) => {
             data : {
                 projectName : project.name,
                 projectDescription : project.description,
-                projectStart : moment(project.start).format('DD-MM-YYYY HH:mm'),
-                projectDeadline : moment(project.deadline).format('DD-MM-YYYY HH:mm'),
+                projectStart : project.start,
+                projectDeadline : project.deadline,
                 projectManager : pm,
                 projectMembers : member,
                 projectTasks : tasks, 
