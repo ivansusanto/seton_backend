@@ -189,12 +189,12 @@ const fetchDetailProjects = async (req, res) => {
         var tasks = await Task.findAll({
             where: {
                 project_id: id
-            }
+            },
+            order: [
+                ['status', 'ASC'],
+                ['title', 'ASC']
+            ]
         });
-
-        for (t in tasks) {
-            tasks[t].pic_email = await User.findByPk(tasks[t].pic_email);
-        }
 
         var upcomingTask = 0;
         var ongoingTask = 0;
@@ -226,6 +226,7 @@ const fetchDetailProjects = async (req, res) => {
                 projectDeadline : moment(project.deadline).format('DD-MM-YYYY HH:mm'),
                 projectManager : pm,
                 projectMembers : member,
+                projectTasks : tasks, 
                 upcomingTask : upcomingTask,
                 ongoingTask : ongoingTask,
                 submittedTask : submittedTask,
