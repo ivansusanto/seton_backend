@@ -238,10 +238,149 @@ const fetchDetailProjects = async (req, res) => {
     }
 }
 
+const addNewMember = async (req, res) =>{
+    const { id, email } = req.params;
+
+    if (!id || !email) {
+        return res.status(200).json({
+            status : "400",
+            message: `Input must not be empty!`,
+            data: ""
+        });
+    } 
+
+    const project = await Project.findByPk(id);
+    if (!project) {
+        return res.status(200).json({
+            status : "404",
+            message: `Project not found!`,
+            data: ""
+        });
+    }
+
+    const user = await User.findByPk(email);
+    if (!user) {
+        return res.status(200).json({
+            status : "404",
+            message: `User not found!`,
+            data: ""
+        });
+    }
+
+    try {
+        await ProjectMember.create({
+            project_id: id,
+            member_email: email
+        });
+
+        return res.status(201).json({
+            status : "201",
+            message: `Member successfully added!`,
+            data: ""
+        });
+    } catch (err) {
+        return res.status(500).json({
+            message: err.message
+        });
+    }
+
+}
+
+const deleteMember = async (req, res) => {
+    const { id, email } = req.params;
+
+    if (!id || !email) {
+        return res.status(200).json({
+            status : "400",
+            message: `Input must not be empty!`,
+            data: ""
+        });
+    } 
+
+    const project = await Project.findByPk(id);
+    if (!project) {
+        return res.status(200).json({
+            status : "404",
+            message: `Project not found!`,
+            data: ""
+        });
+    }
+
+    const user = await User.findByPk(email);
+    if (!user) {
+        return res.status(200).json({
+            status : "404",
+            message: `User not found!`,
+            data: ""
+        });
+    }
+
+    //cek adakah task yg dikerjakan
+    const task = await Task.findAll({
+        where: {
+            project_id: id,
+            pic_email: email
+        }
+    });
+
+    if (task.length > 0) {
+        return res.status(200).json({
+            status : "400",
+            message: `Member still have task to do!`,
+            data: ""
+        });
+    }
+
+    //task team tpi task yg ada di project id
+    const task2 = await Task.findAll({
+        where: {
+            project_id: id,
+        }
+    });
+
+    for (t of task2) {
+        const task_team = await TaskTeam.findAll({
+            where: {
+                task_id: t.id,
+                team_email: email
+            }
+        });
+
+        if (task_team.length > 0) {
+            return res.status(200).json({
+                status : "400",
+                message: `Member still have task to do!`,
+                data: ""
+            });
+        }
+    }
+
+    try {
+        await ProjectMember.destroy({
+            where: {
+                project_id: id,
+                member_email: email
+            }
+        });
+
+        return res.status(200).json({
+            status : "200",
+            message: `Member successfully deleted!`,
+            data: ""
+        });
+    } catch (err) {
+        return res.status(500).json({
+            message: err.message
+        });
+    }
+}
+
 module.exports = {
     fetchAllProjects,
     getUserProjects,
     createProject,
     fetchProjectById,
     fetchDetailProjects,
+    addNewMember,
+    deleteMember
 }
