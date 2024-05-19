@@ -70,6 +70,44 @@ const registerUser = async (req, res) => {
     }
 }
 
+const registerUserWithGoogle = async (req, res) => {
+    const { email, name } = req.body;
+    if (!email || !name) {
+        return res.status(200).json({
+            status : "400",
+            message: `Input must not be empty!`,
+            data: ""
+        });
+    }
+
+    const user = await User.findByPk(email);
+    if (user) {
+        return res.status(200).json({
+            status : "400",
+            message: `Email is already used!`,
+            data: ""
+        });
+    }
+
+    try {
+        await User.create({
+            email: email,
+            name: name,
+            status: 1 //auto aktif
+        });
+
+        return res.status(201).json({
+            status : "201",
+            message: `User successfully registered!`,
+            data: ""
+        });
+    } catch (err) {
+        return res.status(500).json({
+            message: err.message
+        });
+    }
+}
+
 const verifyUser = async (req, res) => {
     const { token } = req.query;
 
@@ -192,6 +230,39 @@ const loginUser = async (req, res) => {
     }
 }
 
+const loginUserWithGoogle = async (req, res) => {
+    const {email} = req.params;
+    const user = await User.findByPk(email);
+    if (user) {
+        const token = jwt.sign({
+            ...user.dataValues,
+            profile_picture: user.profile_picture ? env("HOST") + user.profile_picture : null,
+            password: undefined,
+            auth_token: undefined
+        }, env("SECRET_KEY"), { expiresIn: "30d" });
+
+        await User.update({
+            email: email
+        }, {
+            where: {
+                auth_token: token
+            }
+        });
+
+        return res.status(200).json({
+            status : "200",
+            message: `User successfully logged in!`,
+            data: token
+        });
+    } else {
+        return res.status(200).json({
+            status : "404",
+            message: `Email have not been registered!`,
+            data: ""
+        });
+    }
+}
+
 const fetchAllUser = async (req, res) => {
     var user = await User.findAll();
     return res.status(200).json(user);
@@ -252,8 +323,10 @@ const emailValidate = async (req, res) => {
 
 module.exports = {
     registerUser,
+    registerUserWithGoogle,
     verifyUser,
     loginUser,
+    loginUserWithGoogle,
     fetchAllUser,
     fetchAllUserExceptUserLogin,
     emailValidate,
