@@ -18,7 +18,7 @@ router.post("/register", registerUser);
 router.post("/registerWithGoogle", registerUserWithGoogle);
 router.get("/verify", verifyUser);
 router.post("/login", loginUser);
-router.post("/loginWithGoogle/:email", loginUserWithGoogle);
+router.post("/loginWithGoogle", loginUserWithGoogle);
 router.get("/", fetchAllUser);
 router.get("/except/:email", fetchAllUserExceptUserLogin);
 router.get("/:email", emailValidate);

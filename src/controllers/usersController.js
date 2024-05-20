@@ -231,7 +231,7 @@ const loginUser = async (req, res) => {
 }
 
 const loginUserWithGoogle = async (req, res) => {
-    const {email} = req.params;
+    const { email, name } = req.body;
     const user = await User.findByPk(email);
     if (user) {
         const token = jwt.sign({
@@ -255,11 +255,29 @@ const loginUserWithGoogle = async (req, res) => {
             data: token
         });
     } else {
-        return res.status(200).json({
-            status : "404",
-            message: `Email have not been registered!`,
-            data: ""
-        });
+        // return res.status(200).json({
+        //     status : "404",
+        //     message: `Email have not been registered!`,
+        //     data: ""
+        // });
+
+        try {
+            await User.create({
+                email: email,
+                name: name,
+                status: 1 //auto aktif
+            });
+    
+            return res.status(201).json({
+                status : "201",
+                message: `User successfully registered!`,
+                data: ""
+            });
+        } catch (err) {
+            return res.status(500).json({
+                message: err.message
+            });
+        }
     }
 }
 
