@@ -72,10 +72,6 @@ const getUserTasks = async (req, res) => {
     });
 }
 
-const getProjectTasks = async (req, res) => {
-    
-}
-
 const createTask = async (req, res) => {
     const {project_id, title, deadline, description, priority, taks_team, pic_email} = req.body;
 
@@ -163,9 +159,69 @@ const getProjectMember = async (req, res) => {
     });
 }
 
+const getTasksById = async (req, res) => {
+    const {id} = req.params;
+    var task = await Task.findByPk(id);
+    task.pic = await User.findByPk(task.pic_email);
+    task.project = await Project.findByPk(task.project_id);
+    var teams= await TaskTeam.findAll({
+        where: {
+            task_id: id
+        }
+    })
+    var member = [];
+    for (m of teams) {
+        member.push(await User.findByPk(m.team_email))
+    }
+    
+    var comments= await Comment.findAll({
+        where: {
+            task_id: id
+        }
+    })
+    
+    var attachments= await Attachment.findAll({
+        where: {
+            task_id: id
+        }
+    })
+
+    var checklists= await Checklist.findAll({
+        where: {
+            task_id: id
+        }
+    })
+
+    var labels= await Label.findAll({
+        where: {
+            task_id: id
+        }
+    })
+
+    return res.status(200).json({
+        status : "200",
+        message: `Success get task by id!`,
+        data: {
+            id : task.id,
+            title : task.title,
+            deadline : task.deadline,
+            description : task.description,
+            priority : task.priority,
+            status : task.status,
+            pic : task.pic,
+            project : task.project,
+            teams : member,
+            comments : comments,
+            attachments : attachments,
+            checklists : checklists,
+            labels : labels
+        }
+    });
+}
+
 module.exports = {
     getUserTasks,
-    getProjectTasks,
     createTask,
     getProjectMember,
+    getTasksById,
 }

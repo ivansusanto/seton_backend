@@ -3,16 +3,16 @@ const router = express.Router();
 
 const {
     getUserTasks,
-    getProjectTasks,
     createTask,
-    getProjectMember
+    getProjectMember,
+    getTasksById
 } = require("../controllers/tasksController");
 const { AuthMiddleware } = require("../middlewares/AuthMiddleware");
 const MulterUpload = require("../validations/Multer");
 
 router.get("/user/:email", getUserTasks);
-router.get("/project/:project_id", getProjectTasks);
 router.post("", createTask);
 router.get("/project/getMembers/:project_id", getProjectMember);
+router.get("/:id", getTasksById);
 
 module.exports = router;
