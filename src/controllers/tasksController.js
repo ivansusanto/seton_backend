@@ -219,9 +219,30 @@ const getTasksById = async (req, res) => {
     });
 }
 
+const updateStatusTask = async (req, res) => {
+    const {id, status} = req.params
+    console.log(`update status task ${id} to ${status}`);
+    if(!status) {
+        return res.status(200).json({
+            status : "400",
+            message: `Input must not be empty!`,
+            data: ""
+        });
+    }
+    var task = await Task.findByPk(id);
+    task.status = status;
+    await task.save();
+    return res.status(200).json({
+        status : "200",
+        message: `Success update task status!`,
+        data: ""
+    });
+}
+
 module.exports = {
     getUserTasks,
     createTask,
     getProjectMember,
     getTasksById,
+    updateStatusTask,
 }
