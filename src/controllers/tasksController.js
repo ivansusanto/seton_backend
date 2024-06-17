@@ -207,7 +207,7 @@ const getTasksById = async (req, res) => {
             deadline : task.deadline,
             description : task.description,
             priority : task.priority,
-            status : task.status,
+            statusTask : task.status,
             pic : task.pic,
             project : task.project,
             teams : member,
