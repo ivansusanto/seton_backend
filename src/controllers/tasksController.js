@@ -11,6 +11,8 @@ const Attachment = require("../models/Attachment");
 const Comment = require("../models/Comment");
 const ProjectMember = require("../models/ProjectMember");
 
+const { MulterUpload, uploadHandler} = require("../validations/Multer");
+
 const getUserTasks = async (req, res) => {
     const { email } = req.params;
     const result = [];
@@ -277,7 +279,76 @@ const addChecklist = async (req, res) => {
         message: `Success add checklist!`,
         data: data
     });
+}
 
+const uploadAttachment = async (req, res) => {
+    try{
+        MulterUpload.any()(req, res, async (err) => {
+            uploadHandler(req, req.files);
+
+            const { task_id, filename } = req.body;
+        
+            if (!task_id || !filename) {
+                return res.status(400).json({
+                    status: "400",
+                    message:  `Input must not be empty!`,
+                    data: ""
+                });
+            }
+
+            const date = new Date()
+        
+            try {
+                const attachment = await Attachment.create({
+                    task_id: task_id,
+                    file_name: filename,
+                    upload_time: date
+                });
+        
+                return res.status(201).json({
+                    status: "201",
+                    message: `Attachment successfully created!`,
+                    data: attachment
+                });
+            
+            } catch(err) {
+                return res.status(200).json({
+                    status: "400",
+                    message: err.message,
+                    data: ""
+                });
+            }
+        })
+
+    }catch (err) {
+        return res.status(200).json({
+            status: "500",
+            message: err.message,
+            data: ""
+        });
+    }
+
+}
+
+const getAttachment = async (req, res) => {
+    const { task_id } = req.params;
+    const result = [];
+
+    var attachments = await Attachment.findAll({
+        where: {
+            task_id: task_id
+        }
+    });
+
+    for (a of attachments) {
+        result.push(a.dataValues);
+    }
+
+    return res.status(200).json({
+        status : "200",
+        message: `Success get attachments!`,
+        data: result
+    });
 }
 
 module.exports = {
@@ -288,4 +359,6 @@ module.exports = {
     updateStatusTask,
     addLabel,
     addChecklist,
+    uploadAttachment,
+    getAttachment
 }

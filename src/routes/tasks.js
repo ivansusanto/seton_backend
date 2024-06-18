@@ -9,10 +9,14 @@ const {
     updateStatusTask,
     addLabel,
     addChecklist,
+    uploadAttachment,
+    getAttachment
 } = require("../controllers/tasksController");
 const { AuthMiddleware } = require("../middlewares/AuthMiddleware");
 const MulterUpload = require("../validations/Multer");
 
+router.post("/attachment", uploadAttachment);
+router.get("/attachment/:task_id", getAttachment);
 router.get("/user/:email", getUserTasks);
 router.post("", createTask);
 router.get("/project/getMembers/:project_id", getProjectMember);
