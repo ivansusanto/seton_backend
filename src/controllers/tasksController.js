@@ -351,6 +351,121 @@ const getAttachment = async (req, res) => {
     });
 }
 
+const getChecklists = async (req, res) => {
+    const { id } = req.params;
+    const result = [];
+
+    var checklists = await Checklist.findAll({
+        where: {
+            task_id: id
+        }
+    });
+
+    for (c of checklists) {
+        result.push(c.dataValues);
+    }
+
+    return res.status(200).json({
+        status : "200",
+        message: `Success get checklists!`,
+        data: result
+    });
+}
+
+const removeChecklists = async (req, res) => {
+    const { id } = req.params;
+    var checklist = await Checklist.findByPk(id);
+    await checklist.destroy();
+
+    return res.status(200).json({
+        status : "200",
+        message: `Success remove checklist!`,
+        data: ""
+    });
+}
+
+const getComment = async (req, res) => {
+    const { id } = req.params;
+    const result = [];
+
+    var comments = await Comment.findAll({
+        where: {
+            task_id: id
+        },
+        order: [
+            ['time', 'DESC']
+        ]
+    });
+
+    for (c of comments) {
+        var user = await User.findByPk(c.user_email);
+        c.user_email = user;
+    }
+
+    return res.status(200).json({
+        status : "200",
+        message: `Success get comments!`,
+        data: comments
+    });
+}
+
+const addComment = async (req, res) => {
+    const { task_id, email, value } = req.body;
+
+    const date = new Date()
+    //check email
+    const user = await User.findByPk(email);
+    if(!user) {
+        return res.status(200).json({
+            status: "400",
+            message: `User not found!`,
+            data: ""
+        });
+    }
+
+    try {
+        const _comment = await Comment.create({
+            task_id: task_id,
+            user_email: email,
+            value: value,
+            time: date
+        });
+
+        return res.status(200).json({
+            status: "201",
+            message: `Comment successfully created!`,
+            data: _comment
+        });
+    
+    } catch(err) {
+        return res.status(200).json({
+            status: "400",
+            message: err.message,
+            data: {
+                id : -1,
+                task_id: task_id,
+                user_email: email,
+                value: value,
+                time: date
+            }
+        });
+    }
+
+}
+
+const changeStatusChecklist = async (req, res) => {
+    const { id } = req.params;
+    var checklist = await Checklist.findByPk(id);
+    checklist.is_checked = !checklist.is_checked;
+    await checklist.save();
+
+    return res.status(200).json({
+        status : "200",
+        message: `Success change checklist status!`,
+        data: ""
+    });
+}
+
 module.exports = {
     getUserTasks,
     createTask,
@@ -360,5 +475,10 @@ module.exports = {
     addLabel,
     addChecklist,
     uploadAttachment,
-    getAttachment
+    getAttachment,
+    getChecklists,
+    removeChecklists,
+    getComment,
+    addComment,
+    changeStatusChecklist
 }

@@ -10,7 +10,12 @@ const {
     addLabel,
     addChecklist,
     uploadAttachment,
-    getAttachment
+    getAttachment,
+    getChecklists,
+    removeChecklists,
+    getComment,
+    addComment,
+    changeStatusChecklist
 } = require("../controllers/tasksController");
 const { AuthMiddleware } = require("../middlewares/AuthMiddleware");
 const MulterUpload = require("../validations/Multer");
@@ -21,9 +26,13 @@ router.get("/user/:email", getUserTasks);
 router.post("", createTask);
 router.get("/project/getMembers/:project_id", getProjectMember);
 router.get("/:id", getTasksById);
-router.put("/:id/:status", updateStatusTask);
-
+router.put("/checklist/:id", changeStatusChecklist);
+router.put("/status/:id/:status", updateStatusTask);
 router.post("/label/:id/:title", addLabel);
 router.post("/checklist/:id/:title", addChecklist);
+router.get("/checklist/:id", getChecklists);
+router.delete("/checklist/:id", removeChecklists);
+router.get("/comment/:id", getComment);
+router.post("/comment", addComment);
 
 module.exports = router;
