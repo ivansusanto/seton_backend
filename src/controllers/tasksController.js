@@ -1,3 +1,4 @@
+const color = require('../config/color');
 const env = require("../config/env.config");
 
 const Project = require("../models/Project");
@@ -239,10 +240,52 @@ const updateStatusTask = async (req, res) => {
     });
 }
 
+const addLabel = async (req, res) => {
+    const {id, title} = req.params;
+
+    let warna = color[Math.floor(Math.random() * color.length)];
+    
+
+    var label = new Label({
+        task_id: id,
+        title: title,
+        color: warna
+    });
+    await label.save();
+
+    var data = await Label.findByPk(label.id);
+    return res.status(200).json({
+        status : "201",
+        message: `Success add label!`,
+        data: data
+    });
+}
+
+const addChecklist = async (req, res) => {
+    const {id, title} = req.params;
+
+    var checklist = new Checklist({
+        task_id: id,
+        title: title,
+        is_checked: 0
+    });
+    await checklist.save();
+
+    var data = await Checklist.findByPk(checklist.id);
+    return res.status(200).json({
+        status : "201",
+        message: `Success add checklist!`,
+        data: data
+    });
+
+}
+
 module.exports = {
     getUserTasks,
     createTask,
     getProjectMember,
     getTasksById,
     updateStatusTask,
+    addLabel,
+    addChecklist,
 }

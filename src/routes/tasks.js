@@ -6,7 +6,9 @@ const {
     createTask,
     getProjectMember,
     getTasksById,
-    updateStatusTask
+    updateStatusTask,
+    addLabel,
+    addChecklist,
 } = require("../controllers/tasksController");
 const { AuthMiddleware } = require("../middlewares/AuthMiddleware");
 const MulterUpload = require("../validations/Multer");
@@ -16,5 +18,8 @@ router.post("", createTask);
 router.get("/project/getMembers/:project_id", getProjectMember);
 router.get("/:id", getTasksById);
 router.put("/:id/:status", updateStatusTask);
+
+router.post("/label/:id/:title", addLabel);
+router.post("/checklist/:id/:title", addChecklist);
 
 module.exports = router;
