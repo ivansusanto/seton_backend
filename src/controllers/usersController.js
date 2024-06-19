@@ -5,6 +5,7 @@ const nodemailer = require('nodemailer');
 const { Op } = require("sequelize");
 
 const User = require("../models/User");
+const { MulterUpload, uploadHandler} = require("../validations/Multer");
 
 const registerUser = async (req, res) => {
     const { email, name, password } = req.body;
@@ -375,35 +376,35 @@ const updatePassword = async (req, res) => {
 }
 
 const updateProfile = async (req, res) => {
-    // const { email } = req.params;
+    try{
+        MulterUpload.any()(req, res, async (err) => {
+            uploadHandler(req, req.files);
 
-    // var user = await User.findOne({
-    //     where: {
-    //         email: email
-    //     }
-    // });
+            const { name, filename } = req.body;
+            const { email } = req.params;
 
-    // if (user) {
-    //     return res.status(200).json({
-    //         status : "200",
-    //         message: `Email Valid`,
-    //         data: user
-    //     });
-    // } else {
-    //     var userKosong = {
-    //         email: "",
-    //         name: "",
-    //         profile_picture: null,
-    //         password: "",
-    //         auth_token:"",
-    //         status: 0
-    //     }
-    //     return res.status(200).json({
-    //         status : "404",
-    //         message: `Email not found!`,
-    //         data: userKosong
-    //     });
-    // }
+            await User.update({
+                email: email,
+                name: name,
+                profile_picture: filename
+            }, {
+                where: {
+                    email: email
+                }
+            });
+        })
+        return res.status(200).json({
+            status: "200",
+            message: "Success update profile!",
+            data: ""
+        });
+    }catch (err) {
+        return res.status(200).json({
+            status: "500",
+            message: err.message,
+            data: ""
+        });
+    }
 }
 
 module.exports = {
