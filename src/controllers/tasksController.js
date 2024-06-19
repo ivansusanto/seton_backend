@@ -286,7 +286,8 @@ const uploadAttachment = async (req, res) => {
         MulterUpload.any()(req, res, async (err) => {
             uploadHandler(req, req.files);
 
-            const { task_id, filename } = req.body;
+            const { filename } = req.body;
+            const { task_id } = req.params;
         
             if (!task_id || !filename) {
                 return res.status(400).json({

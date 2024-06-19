@@ -20,7 +20,7 @@ const {
 const { AuthMiddleware } = require("../middlewares/AuthMiddleware");
 const MulterUpload = require("../validations/Multer");
 
-router.post("/attachment", uploadAttachment);
+router.post("/attachment/:task_id", uploadAttachment);
 router.get("/attachment/:task_id", getAttachment);
 router.get("/user/:email", getUserTasks);
 router.post("", createTask);
