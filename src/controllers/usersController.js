@@ -385,7 +385,7 @@ const updateProfile = async (req, res) => {
 
             await User.update({
                 email: email,
-                name: name,
+                name: name.split("\"")[1],
                 profile_picture: filename
             }, {
                 where: {
