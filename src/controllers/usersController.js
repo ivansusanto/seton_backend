@@ -339,6 +339,73 @@ const emailValidate = async (req, res) => {
     }
 }
 
+const updatePassword = async (req, res) => {
+    const { email } = req.params;
+    const { oldPassword, newPassowrd } = req.body;
+
+    var user = await User.findOne({
+        where: {
+            email: email
+        }
+    });
+
+    const resultPassword = bcrypt.compareSync(oldPassword, user.password);
+    if (!resultPassword) {
+        return res.status(200).json({
+            status : "400",
+            message: `Old Password do not match!`,
+            data: ""
+        });
+    } else {
+        const bcryptedPassword = await bcrypt.hash(newPassowrd, parseInt(env("BCRYPT_SALT")));
+        await User.update({
+            email: email,
+            password: bcryptedPassword
+        }, {
+            where: {
+                email: email
+            }
+        });
+        return res.status(200).json({
+            status : "200",
+            message: `Success update password!`,
+            data: ""
+        });
+    }
+}
+
+const updateProfile = async (req, res) => {
+    // const { email } = req.params;
+
+    // var user = await User.findOne({
+    //     where: {
+    //         email: email
+    //     }
+    // });
+
+    // if (user) {
+    //     return res.status(200).json({
+    //         status : "200",
+    //         message: `Email Valid`,
+    //         data: user
+    //     });
+    // } else {
+    //     var userKosong = {
+    //         email: "",
+    //         name: "",
+    //         profile_picture: null,
+    //         password: "",
+    //         auth_token:"",
+    //         status: 0
+    //     }
+    //     return res.status(200).json({
+    //         status : "404",
+    //         message: `Email not found!`,
+    //         data: userKosong
+    //     });
+    // }
+}
+
 module.exports = {
     registerUser,
     registerUserWithGoogle,
@@ -348,4 +415,6 @@ module.exports = {
     fetchAllUser,
     fetchAllUserExceptUserLogin,
     emailValidate,
+    updatePassword,
+    updateProfile
 }

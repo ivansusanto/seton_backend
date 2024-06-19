@@ -10,6 +10,8 @@ const {
     fetchAllUser,
     fetchAllUserExceptUserLogin,
     emailValidate,
+    updatePassword,
+    updateProfile
 } = require("../controllers/usersController");
 const { AuthMiddleware } = require("../middlewares/AuthMiddleware");
 const MulterUpload = require("../validations/Multer");
@@ -22,5 +24,7 @@ router.post("/loginWithGoogle", loginUserWithGoogle);
 router.get("/", fetchAllUser);
 router.get("/except/:email", fetchAllUserExceptUserLogin);
 router.get("/:email", emailValidate);
+router.put("/password/:email", updatePassword);
+router.put("/:email", updateProfile);
 
 module.exports = router;
