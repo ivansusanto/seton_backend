@@ -341,7 +341,7 @@ const emailValidate = async (req, res) => {
 
 const updatePassword = async (req, res) => {
     const { email } = req.params;
-    const { oldPassword, newPassowrd } = req.body;
+    const { oldPassword, newPassword } = req.body;
 
     var user = await User.findOne({
         where: {
@@ -357,7 +357,7 @@ const updatePassword = async (req, res) => {
             data: ""
         });
     } else {
-        const bcryptedPassword = await bcrypt.hash(newPassowrd, parseInt(env("BCRYPT_SALT")));
+        const bcryptedPassword = await bcrypt.hash(newPassword, parseInt(env("BCRYPT_SALT")));
         await User.update({
             email: email,
             password: bcryptedPassword
