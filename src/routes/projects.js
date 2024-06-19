@@ -10,11 +10,13 @@ const {
     fetchProjectById,
     fetchDetailProjects,
     addNewMember,
-    deleteMember
+    deleteMember,
+    getTasksProject
 } = require("../controllers/projectsController");
 
 router.get("/", fetchAllProjects);
 router.get("/:email", getUserProjects);
+router.get("/getTasksProject/:id", getTasksProject);
 router.post("/", createProject);
 router.get("/getById/:id", fetchProjectById);
 router.get("/getDetail/:id", fetchDetailProjects);
