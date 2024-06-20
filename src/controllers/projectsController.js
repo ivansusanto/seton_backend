@@ -12,7 +12,7 @@ const Label = require("../models/Label");
 
 const createProject = async (req, res) => {
     const { name, description, startTime, deadline, pm_email, members_email} = req.body;
-
+    console.log(req.body)
     if (!name || !description || !startTime || !deadline || !pm_email) {
         return res.status(200).json({
             status : "400",
@@ -30,22 +30,6 @@ const createProject = async (req, res) => {
         });
     }
 
-    if (new Date(startTime) > new Date(deadline)) {
-        return res.status(200).json({
-            status : "400",
-            message: `Start date must be before deadline!`,
-            data: ""
-        });
-    }
-
-    if(new Date(startTime) < new Date()) {
-        return res.status(200).json({
-            status : "400",
-            message: `Start date must be after today!`,
-            data: ""
-        });
-    }
-
     try {
         await Project.create({
             name: name,
@@ -58,15 +42,18 @@ const createProject = async (req, res) => {
         const project = await Project.findOne({
             order: [ [ 'id', 'DESC' ]],
         });
-        for (let i = 0; i < members_email.length; i++){
-            let project_member = new ProjectMember({
-                project_id: project.id,
-                member_email: members_email[i],
-            })
-
-            await project_member.save();
+        
+        if(members_email.length > 0 && members_email != undefined){
+            for (let i = 0; i < members_email.length; i++){
+                let project_member = new ProjectMember({
+                    project_id: project.id,
+                    member_email: members_email[i],
+                })
+    
+                await project_member.save();
+            }
         }
-
+       
         return res.status(201).json({
             status : "201",
             message: `Project successfully created!`,
@@ -76,7 +63,6 @@ const createProject = async (req, res) => {
         return res.status(500).json({
             message: err.message
         });
-    
     }
 }
 
